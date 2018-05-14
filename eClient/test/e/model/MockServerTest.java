@@ -27,6 +27,8 @@ class MockServerTest {
 	private PrintWriter writer;
 	private BufferedReader in;
 	private ArrayList<Food> foodList;
+	private HashMap<Food, Integer> foodMap;
+	private HashMap<Food, Integer> history;
 	
 	@Test
 	void build() throws Exception {
@@ -42,31 +44,53 @@ class MockServerTest {
 			ois = new ObjectInputStream(socket.getInputStream());
 			writer = new PrintWriter(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			
-			String message = "";
+			foodMap = new HashMap<Food, Integer>();
+			history = new HashMap<Food, Integer>();
 			while(true) {
-				if(in.ready()) {
-					System.out.println("ready()");
-					message = (String)in.readLine();
+				String message = "";
+				while(true) {
+					if(in.ready()) {
+						message = in.readLine();
+						System.out.println(message);
+						break;
+					}
+				}
+				switch(message) {
+					case Message.INIT:
+						writer.println(Message.INIT);
+						writer.flush();
+						oos.writeObject(foodList);
+						oos.flush();
+						break;
+					case Message.SUBMIT:
+						if(!foodMap.isEmpty()) {
+							addToHistory();
+						}
+						foodMap = (HashMap<Food, Integer>) ois.readObject();
+						System.out.println("get foodMap: "+ foodMap);
+						addToHistory();
+						System.out.println("addToHistory: " + history);
+						writer.println(Message.GET_SUBMIT);
+						writer.flush();
+						break;
 					
-					break;
 				}
 			}
-			switch(message) {
-				case Message.INIT:
-					writer.println(Message.INIT);
-					writer.flush();
-					oos.writeObject(foodList);
-					oos.flush();
-					break;
-				default:
-					break;
-			}
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		while(true);
 		
 	}
 
+	private void addToHistory() {  //–Ë“™≤‚ ‘
+		for(Map.Entry<Food, Integer> entry: foodMap.entrySet()) {
+			Food food = entry.getKey();
+			if(history.containsKey(food)) {
+				history.put(food, history.get(food) + entry.getValue());
+			}else {
+				history.put(food, entry.getValue());
+			}
+		}
+	}
 }
