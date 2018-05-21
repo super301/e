@@ -37,26 +37,42 @@ class MockServerTest {
 			Food food = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i);
 			foodList.add(food);
 		}
+		create();
+		server();
+		server();
+		
+	}
+	private void create() {
 		try {
 			server = new ServerSocket(2020);
 			socket = server.accept();
-			oos = new ObjectOutputStream(socket.getOutputStream());
 			ois = new ObjectInputStream(socket.getInputStream());
+			oos = new ObjectOutputStream(socket.getOutputStream());
 			writer = new PrintWriter(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			foodMap = new HashMap<Food, Integer>();
 			history = new HashMap<Food, Integer>();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	private void server() {
+		try {
+			
 			while(true) {
 				String message = "";
+				
 				while(true) {
 					if(in.ready()) {
 						message = in.readLine();
 						System.out.println(message);
+						System.out.println(message.equals(Message.SUBMIT));
 						break;
 					}
 				}
 				switch(message) {
 					case Message.INIT:
+						System.out.println("number: " + in.readLine());
 						writer.println(Message.INIT);
 						writer.flush();
 						oos.writeObject(foodList);
@@ -66,25 +82,36 @@ class MockServerTest {
 						if(!foodMap.isEmpty()) {
 							addToHistory();
 						}
-						foodMap = (HashMap<Food, Integer>) ois.readObject();
+						System.out.println("block");
+
+						Object obj = ois.readObject();
+						if(obj != null) {
+							foodMap = (HashMap<Food, Integer>)obj;
+						}
+				//		foodMap = (HashMap<Food, Integer>) ois.readObject();
+						
 						System.out.println("get foodMap: "+ foodMap);
 						addToHistory();
 						System.out.println("addToHistory: " + history);
 						writer.println(Message.GET_SUBMIT);
 						writer.flush();
 						break;
-					
+					case Message.CHECK:
+						//生成历史账单后清空foodMap、history，以备后来的客户使用
+						
+						writer.println(Message.GET_CHECK);
+						writer.flush();
+						break;
 				}
 			}
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	private void addToHistory() {  //需要测试
 		for(Map.Entry<Food, Integer> entry: foodMap.entrySet()) {
+			
 			Food food = entry.getKey();
 			if(history.containsKey(food)) {
 				history.put(food, history.get(food) + entry.getValue());
