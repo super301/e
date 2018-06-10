@@ -14,25 +14,26 @@ public class Client implements Runnable{
 	private ExecutorService exectorService;
 	private ArrayList<Food> foodList;
 	private HashMap<Food, Integer> foodMap;
+	private HashMap<Food, Integer> askFoodMap;
 	private HashMap<Food, Integer> history;
 	private String number;
 	public static double price;
 	public static double totalPrice;
+	private BehaviorListener listener;
 	
 	public Client(String number) throws IOException{
 		this.number = number;
 		socket = new Socket("127.0.0.1", 2020);
-		System.out.println("unlock");
 		oos = new ObjectOutputStream(socket.getOutputStream());
 		ois = new ObjectInputStream(socket.getInputStream());
 		writer = new PrintWriter(socket.getOutputStream());
-		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		System.out.println("IO unlock");
-		exectorService = Executors.newCachedThreadPool();
-		exectorService.execute(this);
+		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));;
 		history = new HashMap<Food, Integer>();
 		foodMap = new HashMap<Food, Integer>();
+		askFoodMap = new HashMap<Food, Integer>();
 		init();
+		exectorService = Executors.newCachedThreadPool();
+		exectorService.execute(this);
 	}
 	public void init() throws IOException{
 		writer.println(Message.INIT);
@@ -41,17 +42,20 @@ public class Client implements Runnable{
 		writer.flush();
 	}
 	public void submit() throws IOException,Exception{
-		writer.println(Message.SUBMIT);
-		writer.flush();
-		Thread.currentThread().sleep(20);
-		oos.writeObject(foodMap);
-		oos.flush();
-		System.out.println("submit has sent");
+		if(askFoodMap.size() > 0) {
+			writer.println(Message.SUBMIT);
+			writer.flush();
+			Thread.currentThread().sleep(40);
+			System.out.println(askFoodMap);
+			oos.reset();
+			oos.writeObject(askFoodMap);
+			oos.flush();
+			System.out.println("submit has sent");
+		}
 	}
 	public void check() throws IOException{
 		writer.println(Message.CHECK);
 		writer.flush();
-		
 	}
 	@Override
 	public void run(){
@@ -67,18 +71,19 @@ public class Client implements Runnable{
 						if(in.ready()) {
 							message = in.readLine();
 							System.out.println(message);
+							Thread.currentThread().sleep(100);
 							break;
 						}
 					}
 					switch(message) {
 						case Message.INIT:
+							Thread.currentThread().sleep(500);
 							foodList = (ArrayList<Food>)ois.readObject();
 							initFoodMap();
 							System.out.println("Client get" + foodList);
 							break;
 						case Message.GET_SUBMIT:
-							System.out.println(this.foodMap);
-							addToHistory();
+							recevieSubmint();
 							break;
 						case Message.GET_CHECK:
 							clearMapAndHistory();
@@ -93,26 +98,70 @@ public class Client implements Runnable{
 		}
 	}
 	private void clearMapAndHistory() {
-		foodMap.clear();
+		Iterator<HashMap.Entry<Food, Integer>> it = foodMap.entrySet().iterator();
+		while(it.hasNext()) {
+			it.next().setValue(0);
+		}
+		askFoodMap.clear();
 		history.clear();
+		listener.action();
 	}
-	private void addToHistory() {  //需要测试
-		for(Map.Entry<Food, Integer> entry: foodMap.entrySet()) {
+	private void addToHistory(HashMap<Food, Integer> dest, HashMap<Food, Integer> sour) {  //需要测试
+		for(Map.Entry<Food, Integer> entry: sour.entrySet()) {
 			Food food = entry.getKey();
-			if(history.containsKey(food)) {
-				history.put(food, history.get(food) + entry.getValue());
+			if(dest.containsKey(food)) {
+				dest.put(food, dest.get(food) + entry.getValue());
 			}else {
-				history.put(food, entry.getValue());
+				dest.put(food, entry.getValue());
 			}
 		}
-
-		System.out.println(this.history);
+	}
+	private void recevieSubmint() {
+		addToHistory(history, askFoodMap);
+		Iterator<HashMap.Entry<Food, Integer>> it = foodMap.entrySet().iterator();
+		while(it.hasNext()) {
+			it.next().setValue(0);
+		}
+		askFoodMap.clear();
+		listener.action();
+	}
+	public void addFood(Food food) {
+		if(askFoodMap.containsKey(food)) {
+			int i = askFoodMap.get(food) + 1;
+			askFoodMap.put(food, i);
+			foodMap.put(food, i);
+		}else {
+			askFoodMap.put(food, 1);
+			foodMap.put(food, 1);
+		}
+		listener.action();
+	}
+	public void delFood(Food food) {
+		if(!askFoodMap.containsKey(food)) {
+			return ;
+		}else {
+			int i = askFoodMap.get(food);
+			if( i > 0) {
+				askFoodMap.put(food, i-1);
+				foodMap.put(food, i-1);
+				if(i-1 == 0)
+					askFoodMap.remove(food);
+			}
+		}
+		listener.action();
 	}
 	private void initFoodMap() {
 		Iterator<Food> it = foodList.iterator();
 		while(it.hasNext()) {
 			foodMap.put(it.next(), 0);
 		}
+	}
+	
+	public HashMap<Food, Integer> getAskFoodMap() {
+		return askFoodMap;
+	}
+	public void setAskFoodMap(HashMap<Food, Integer> askFoodMap) {
+		this.askFoodMap = askFoodMap;
 	}
 	public ArrayList<Food> getFoodList() {
 		return foodList;
@@ -149,6 +198,25 @@ public class Client implements Runnable{
 	}
 	public static void setTotalPrice(double totalPrice) {
 		Client.totalPrice = totalPrice;
+	}
+	public BehaviorListener getListener() {
+		return listener;
+	}
+	public void setListener(BehaviorListener listener) {
+		this.listener = listener;
+	}
+	public void close() {
+		try {
+			in.close();
+			writer.close();
+			ois.close();
+			oos.close();
+			if(!socket.isClosed()) {
+				socket.close();
+			}
+		}catch(IOException e) {
+			System.out.println("close error");
+		}
 	}
 	
 }

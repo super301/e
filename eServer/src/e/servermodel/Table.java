@@ -15,13 +15,15 @@ public class Table implements Runnable{
 	private HashMap<Food, Integer> foodMap;
 	private HashMap<Food, Integer> history;
 	private ExecutorService executorService;
+	private Server server;
 	private boolean isUsing;
 	private boolean isConnect;
 	public Table() {
 	}
-	public Table(ExecutorService exec, Socket socket) throws IOException{
+	public Table(ExecutorService exec, Socket socket, Server server) throws IOException{
 		this.executorService = exec;
 		this.socket = socket;
+		this.server = server;
 		oos = new ObjectOutputStream(socket.getOutputStream());
 		ois = new ObjectInputStream(socket.getInputStream());
 		writer = new PrintWriter(socket.getOutputStream());
@@ -44,12 +46,14 @@ public class Table implements Runnable{
 				switch(message) {
 				case Message.INIT:
 					String number = in.readLine();
+					
 					if(Server.tableNames.contains(number)) {
 						writer.println(Message.INIT);
 						writer.flush();
 						oos.writeObject(Server.foodList);
 						oos.flush();
-						Server.tables.put(number, this);
+						this.number = number;
+						server.put(number, this);
 					}
 					break;
 				case Message.SUBMIT:
@@ -80,5 +84,8 @@ public class Table implements Runnable{
 				dest.put(food, entry.getValue());
 			}
 		}
+	}
+	public String getNumber() {
+		return number;
 	}
 }

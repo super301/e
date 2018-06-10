@@ -12,7 +12,7 @@ public class Server implements Runnable{
 	private Socket socket;
 	public static ArrayList<Food> foodList;
 	private ExecutorService executorService;
-	public static HashMap<String, Table> tables = new HashMap<String, Table>();
+	private HashMap<String, Table> tables = new HashMap<String, Table>();
 	public static ArrayList<String> tableNames = new ArrayList<String>();
 	static {
 		foodList = new ArrayList<Food>();
@@ -21,10 +21,10 @@ public class Server implements Runnable{
 			foodList.add(food);
 		}
 		for(int i=0; i < 6; i++) {
-			tableNames.add("Talbe"+(i+1));
+			tableNames.add("Table"+(i+1));
 		}
 	}
-	
+	private ConnectListener conListener;
 	public Server() {
 		executorService = Executors.newCachedThreadPool();
 		executorService.submit(this);
@@ -38,11 +38,19 @@ public class Server implements Runnable{
 		try {
 			while(true) {
 				socket = server.accept();
-				Table table = new Table(executorService, socket);
+				Table table = new Table(executorService, socket, this);
 				System.out.println("get a socket");
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void put(String number, Table table) {
+		this.tables.put(number, table);
+		conListener.hasConnect(table);
+	}
+	public void addConnectListener(ConnectListener conListener) {
+		this.conListener = conListener;
 	}
 }

@@ -15,38 +15,37 @@ class ClientTest {
 		Client client = new Client("Table1");
 		Thread.sleep(200);
 		HashMap<Food, Integer> foodMap = new HashMap<Food, Integer>();
+		Food [] foods= new Food[3];
 		for(int i=0; i < 3; i++) {
-			Food food = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i);
-			foodMap.put(food, i);
+			foods[i] = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i);
+			client.addFood(foods[i]);
 		}
-		client.setFoodMap(foodMap);
+		client.addFood(foods[2]);
+		client.addFood(foods[2]);
+		client.addFood(foods[2]);
 		client.submit();
 		Thread.currentThread().sleep(2000);
-		System.out.println("client submit: " + client.getFoodMap());
+		System.out.println("client submit: " + client.getAskFoodMap());
 		System.out.println("after submit the history: " + client.getHistory());
-	/*
-		client.submit();
-		Thread.currentThread().sleep(1000);
-		System.out.println("after submit the history: " + client.getHistory());
-	*/
+		System.out.println("FoodMap: " + client.getFoodMap());
+		
 		Thread.currentThread().sleep(2000);
 		client.check();
 		Thread.currentThread().sleep(2000);
-	//	assertTrue(client.getFoodMap().isEmpty());
-	//	assertTrue(client.getFoodMap().isEmpty());
-		System.out.println("after check foddMap: " + client.getFoodMap());
+		System.out.println("after check foodMap: " + client.getFoodMap());
 		System.out.println("after check: " + client.getHistory());
+		System.out.println("after check askFoodMap: " + client.getAskFoodMap());
 		
-		for(int i=0; i < 3; i++) {
-			Food food = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i);
-			foodMap.put(food, i+2);
-		}
-		client.setFoodMap(foodMap);
+		Food food = new Food("food4", new ImageIcon("images/1.jpg"),4);
+		client.addFood(food);
 		client.submit();
-		Thread.currentThread().sleep(1000);
+		Thread.currentThread().sleep(2000);
 		System.out.println("after submit the history: " + client.getHistory());
+		System.out.println("after submit the askFoodMap: " + client.getAskFoodMap());
+		System.out.println("after submit the FoodMap: " + client.getFoodMap());
 		
 
+		
 		Thread.currentThread().sleep(2000);
 		client.submit();
 		Thread.currentThread().sleep(2000);

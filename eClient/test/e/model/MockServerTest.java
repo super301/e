@@ -66,7 +66,6 @@ class MockServerTest {
 					if(in.ready()) {
 						message = in.readLine();
 						System.out.println(message);
-						System.out.println(message.equals(Message.SUBMIT));
 						break;
 					}
 				}
@@ -82,13 +81,12 @@ class MockServerTest {
 						if(!foodMap.isEmpty()) {
 							addToHistory();
 						}
-						System.out.println("block");
-
-						Object obj = ois.readObject();
+				/*		Object obj = ois.readObject();
+						System.out.println(obj);
 						if(obj != null) {
 							foodMap = (HashMap<Food, Integer>)obj;
-						}
-				//		foodMap = (HashMap<Food, Integer>) ois.readObject();
+						}*/
+						foodMap = (HashMap<Food, Integer>) ois.readObject();
 						
 						System.out.println("get foodMap: "+ foodMap);
 						addToHistory();
@@ -119,5 +117,6 @@ class MockServerTest {
 				history.put(food, entry.getValue());
 			}
 		}
+		foodMap.clear();
 	}
 }

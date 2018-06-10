@@ -44,7 +44,7 @@ public class Food implements Serializable{
 	}
 	@Override
 	public boolean equals(Object object) {
-		return (object instanceof Food) && this.name.equals((Food)object);
+		return (object instanceof Food) && this.name.equals(((Food)object).getName());
 	}
 	@Override
 	public int hashCode() {
