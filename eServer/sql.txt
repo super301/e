@@ -1,0 +1,11 @@
+create table foods(
+id integer auto_increment primary key,
+name varchar(20) unique not null,
+price double(5,2) not null,
+uri varchar(50) not null)
+
+E:/java-eclipse/se/eServer/images
+insert into foods(name, price, uri) values('∫Ï…’÷ÌÕ∑»‚', 9.9, 'E:/java-eclipse/se/eServer/images/1.jpg')
+insert into foods(name, price, uri) values('∂π—ø≥¥∫£¥¯Àø', 9.9, 'E:/java-eclipse/se/eServer/images/2.jpg')
+insert into foods(name, price, uri) values('¿±≥¥ª®∏Ú', 9.9, 'E:/java-eclipse/se/eServer/images/3.jpg')
+insert into foods(name, price, uri) values(?, ?, ?)

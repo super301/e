@@ -18,6 +18,7 @@ public class Table implements Runnable{
 	private Server server;
 	private boolean isUsing;
 	private boolean isConnect;
+	private RequestListener listener;
 	public Table() {
 	}
 	public Table(ExecutorService exec, Socket socket, Server server) throws IOException{
@@ -40,16 +41,17 @@ public class Table implements Runnable{
 				while(true) {
 					if(in.ready()) {
 						message = in.readLine();
+						System.out.println(message);
 						break;
 					}
 				}
 				switch(message) {
 				case Message.INIT:
 					String number = in.readLine();
-					
 					if(Server.tableNames.contains(number)) {
 						writer.println(Message.INIT);
 						writer.flush();
+						System.out.println(System.currentTimeMillis());
 						oos.writeObject(Server.foodList);
 						oos.flush();
 						this.number = number;
@@ -59,23 +61,39 @@ public class Table implements Runnable{
 				case Message.SUBMIT:
 					HashMap<Food, Integer> temp;
 					temp = (HashMap<Food, Integer>) ois.readObject();
-					if(!foodMap.isEmpty()) {
-						addFoods(temp, foodMap);
-					}
-					addFoods(foodMap, history);
-					writer.println(Message.GET_SUBMIT);
-					writer.flush();
+					System.out.println("Table temp: " + temp);
+					addFoods(foodMap, temp);
+					if(listener != null)
+						listener.hasRequest();
 					break;
 				case Message.CHECK:
-					writer.println(Message.GET_CHECK);
-					writer.flush();
+					doCheck();
 				}
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-	private void addFoods(HashMap<Food, Integer> sour, HashMap<Food, Integer> dest) {
+	private void clearMap(HashMap<Food, Integer> map) {
+		map.clear();
+	}
+	public void doSubmit() throws Exception{
+		addFoods(history, foodMap);
+		clearMap(foodMap);
+		writer.println(Message.GET_SUBMIT);
+		writer.flush();
+		if(listener != null)
+			listener.hasRequest();
+	}
+	public void doCheck() throws Exception{
+		clearMap(history);
+		clearMap(foodMap);
+		writer.println(Message.GET_CHECK);
+		writer.flush();
+		if(listener != null)
+			listener.hasRequest();
+	}
+	private void addFoods(HashMap<Food, Integer> dest, HashMap<Food, Integer> sour ) {
 		for(Map.Entry<Food, Integer> entry: sour.entrySet()) {
 			Food food = entry.getKey();
 			if(dest.containsKey(food)) {
@@ -88,4 +106,20 @@ public class Table implements Runnable{
 	public String getNumber() {
 		return number;
 	}
+	public HashMap<Food, Integer> getFoodMap() {
+		return foodMap;
+	}
+	public void setFoodMap(HashMap<Food, Integer> foodMap) {
+		this.foodMap = foodMap;
+	}
+	public HashMap<Food, Integer> getHistory() {
+		return history;
+	}
+	public void setHistory(HashMap<Food, Integer> history) {
+		this.history = history;
+	}
+	public void addRequestListener(RequestListener listener) {
+		this.listener = listener;
+	}
+	
 }

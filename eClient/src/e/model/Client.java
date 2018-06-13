@@ -36,6 +36,7 @@ public class Client implements Runnable{
 		exectorService.execute(this);
 	}
 	public void init() throws IOException{
+		
 		writer.println(Message.INIT);
 		writer.flush();
 		writer.println(number);
@@ -51,6 +52,9 @@ public class Client implements Runnable{
 			oos.writeObject(askFoodMap);
 			oos.flush();
 			System.out.println("submit has sent");
+//			askFoodMap.clear();
+//			listener.action();
+			recevieSubmint();
 		}
 	}
 	public void check() throws IOException{
@@ -60,7 +64,6 @@ public class Client implements Runnable{
 	@Override
 	public void run(){
 		// TODO Auto-generated method stub
-		
 		System.out.println("in run");
 		
 		while(true) {
@@ -77,13 +80,15 @@ public class Client implements Runnable{
 					}
 					switch(message) {
 						case Message.INIT:
-							Thread.currentThread().sleep(500);
+							Thread.currentThread().sleep(1000);
+							System.out.println(System.currentTimeMillis());
 							foodList = (ArrayList<Food>)ois.readObject();
+							System.out.println("get food done");
 							initFoodMap();
 							System.out.println("Client get" + foodList);
 							break;
 						case Message.GET_SUBMIT:
-							recevieSubmint();
+						//	recevieSubmint();
 							break;
 						case Message.GET_CHECK:
 							clearMapAndHistory();

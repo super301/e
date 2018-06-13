@@ -33,13 +33,13 @@ public class ClientWindow extends JFrame implements BehaviorListener, WindowList
 	private Client client;
 	HashMap<Food, Integer> foodMap = new HashMap<Food, Integer>();
 	
-	public ClientWindow() throws IOException{
+	public ClientWindow(String name) throws IOException{
 		this.setVisible(true);
 		this.setSize(640, 480);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-	
-		client = new Client("Table1");
+		
+		client = new Client(name);
 		client.setListener(this);
 		try {
 			Thread.currentThread().sleep(2000);
@@ -132,7 +132,7 @@ public class ClientWindow extends JFrame implements BehaviorListener, WindowList
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			new ClientWindow();
+			new ClientWindow("Table1");
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -141,15 +141,12 @@ public class ClientWindow extends JFrame implements BehaviorListener, WindowList
 	@Override
 	public void repaint() {
 		super.repaint();
-		System.out.println("repaint");
 		historyPanel.setFoodMap(client.getHistory());
-		System.out.println(client.getAskFoodMap()+"repaint");
 		askPanel.setFoodMap(client.getAskFoodMap());
 		foodPanel.setFoodMap(client.getFoodMap());
 		this.validate();
 	}
 	public void action() {
-		System.out.println("action");
 		cardLayout.first(cardPanel);
 		repaint();
 	}
