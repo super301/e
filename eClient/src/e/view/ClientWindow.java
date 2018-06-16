@@ -33,11 +33,7 @@ public class ClientWindow extends JFrame implements BehaviorListener, WindowList
 	private Client client;
 	HashMap<Food, Integer> foodMap = new HashMap<Food, Integer>();
 	
-	public ClientWindow(String name) throws IOException{
-		this.setVisible(true);
-		this.setSize(640, 480);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+	public ClientWindow(String name) throws IOException{	
 		
 		client = new Client(name);
 		client.setListener(this);
@@ -53,6 +49,10 @@ public class ClientWindow extends JFrame implements BehaviorListener, WindowList
 		jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jsc, right);
 		jsp.setDividerLocation(0.5);
 		this.add(jsp);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(640, 640);
+		this.setTitle("Client: " + name);
+		this.setVisible(true);
 	}
 	private void initRight() {
 		bottom();
@@ -83,51 +83,7 @@ public class ClientWindow extends JFrame implements BehaviorListener, WindowList
 		submit.addActionListener(this);
 		askPane.addActionListener(this);
 		hisPane.addActionListener(this);
-		/*
-		check.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				try {
-					client.check();
-				}catch(IOException ee) {
-					ee.printStackTrace();
-				}
-			}
-		});
-		askPane.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				cardLayout.first(cardPanel);
-				repaint();
-			}
-		});
-		hisPane.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				cardLayout.last(cardPanel);
-				repaint();
-			}
-			
-		});
-		submit.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				try {
-					client.submit();
-					validate();
-				}catch(Exception ee) {
-					ee.printStackTrace();
-				}
-			}
-		});*/
+		
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

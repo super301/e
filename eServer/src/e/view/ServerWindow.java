@@ -31,7 +31,6 @@ public class ServerWindow extends JFrame implements ActionListener{
 			tableDials[i] = new TableDial(this, "Table"+(i+1));
 		}
 		tablePanel = new TablePanel(tableDials, server.getTables());
-//		menue = new JPanel();
 		menue = new RecipePanel();
 		menue.setBackground(Color.blue);
 		cardLayout = new CardLayout();

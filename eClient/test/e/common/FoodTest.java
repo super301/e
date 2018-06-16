@@ -14,7 +14,7 @@ class FoodTest {
 	void setUp() {
 		foodMap = new HashMap<Food, Integer>();
 		for(int i=0; i < 5; i++) {
-			food[i] = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i);
+			food[i] = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),new Double(i));
 			foodMap.put(food[i], i);
 		
 		}

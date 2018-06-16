@@ -1,6 +1,9 @@
 package e.servermodel;
 import java.util.*;
 import java.util.concurrent.*;
+
+import javax.swing.JOptionPane;
+
 import java.net.*;
 import java.io.*;
 import e.common.*;
@@ -41,7 +44,7 @@ public class Table implements Runnable{
 				while(true) {
 					if(in.ready()) {
 						message = in.readLine();
-						System.out.println(message);
+//						System.out.println(message);
 						break;
 					}
 				}
@@ -51,7 +54,6 @@ public class Table implements Runnable{
 					if(Server.tableNames.contains(number)) {
 						writer.println(Message.INIT);
 						writer.flush();
-						System.out.println(System.currentTimeMillis());
 						oos.writeObject(Server.foodList);
 						oos.flush();
 						this.number = number;
@@ -61,13 +63,12 @@ public class Table implements Runnable{
 				case Message.SUBMIT:
 					HashMap<Food, Integer> temp;
 					temp = (HashMap<Food, Integer>) ois.readObject();
-					System.out.println("Table temp: " + temp);
 					addFoods(foodMap, temp);
 					if(listener != null)
 						listener.hasRequest();
 					break;
 				case Message.CHECK:
-					doCheck();
+					JOptionPane.showMessageDialog(null, this.number + "«Î«ÛΩ·À„");
 				}
 			}
 		}catch(Exception e) {

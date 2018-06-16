@@ -8,7 +8,7 @@ public class SqlHelper {
 	private ResultSet rs;
 	private int sum;
 	private String driver = "com.mysql.cj.jdbc.Driver";
-	private String url="jdbc:mysql://127.0.0.1/test?useSSL=false&serverTimezone=Hongkong";
+	private String url="jdbc:mysql://127.0.0.1/test?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Hongkong";
 	private String username = "3011";
 	private String password = "3011";
 	

@@ -10,7 +10,7 @@ public class GenerateClient {
 		// TODO Auto-generated method stub
 
 		ClientWindow cws[] = new ClientWindow[6];
-		for(int i = 0; i < 3; i++) {
+		for(int i = 0; i < 6; i++) {
 			String name = "Table" + (i+1);
 			cws[i] = new ClientWindow(name);
 			Thread.currentThread().sleep(10000);

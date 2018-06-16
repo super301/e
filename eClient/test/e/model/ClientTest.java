@@ -17,7 +17,7 @@ class ClientTest {
 		HashMap<Food, Integer> foodMap = new HashMap<Food, Integer>();
 		Food [] foods= new Food[3];
 		for(int i=0; i < 3; i++) {
-			foods[i] = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i);
+			foods[i] = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),new Double(i));
 			client.addFood(foods[i]);
 		}
 		client.addFood(foods[2]);
@@ -36,7 +36,7 @@ class ClientTest {
 		System.out.println("after check: " + client.getHistory());
 		System.out.println("after check askFoodMap: " + client.getAskFoodMap());
 		
-		Food food = new Food("food4", new ImageIcon("images/1.jpg"),4);
+		Food food = new Food("food4", new ImageIcon("images/1.jpg"),new Double(4));
 		client.addFood(food);
 		client.submit();
 		Thread.currentThread().sleep(2000);

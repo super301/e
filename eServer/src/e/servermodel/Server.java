@@ -17,10 +17,6 @@ public class Server implements Runnable{
 	public static ArrayList<String> tableNames = new ArrayList<String>();
 	static {
 		foodList = new ArrayList<Food>();
-//		for(int i=0; i < 8; i++) {
-//			Food food = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i+10);
-//			foodList.add(food);
-//		}
 		for(int i=0; i < 6; i++) {
 			tableNames.add("Table"+(i+1));
 		}
@@ -33,11 +29,9 @@ public class Server implements Runnable{
 		try {
 			while(rs.next()) {
 				String name = rs.getString(2);
-				double price = rs.getDouble(3);
+				Double price = rs.getDouble(3);
 				String uri = rs.getString(4);
-				System.out.println(uri);
 				Food food = new Food(name, new ImageIcon(uri), price);
-				System.out.println(food);
 				foodList.add(food);
 			}
 		}catch(Exception e) {

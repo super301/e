@@ -24,36 +24,41 @@ public class Client implements Runnable{
 	public Client(String number) throws IOException{
 		this.number = number;
 		socket = new Socket("127.0.0.1", 2020);
-		oos = new ObjectOutputStream(socket.getOutputStream());
 		ois = new ObjectInputStream(socket.getInputStream());
+		oos = new ObjectOutputStream(socket.getOutputStream());
 		writer = new PrintWriter(socket.getOutputStream());
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));;
 		history = new HashMap<Food, Integer>();
 		foodMap = new HashMap<Food, Integer>();
 		askFoodMap = new HashMap<Food, Integer>();
-		init();
+		try {
+			init();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		exectorService = Executors.newCachedThreadPool();
 		exectorService.execute(this);
 	}
-	public void init() throws IOException{
-		
+	public void init() throws IOException, ClassNotFoundException{
 		writer.println(Message.INIT);
 		writer.flush();
 		writer.println(number);
 		writer.flush();
+		String message = in.readLine();
+		foodList = (ArrayList<Food>)ois.readObject();
+		System.out.println("get food done");
+		initFoodMap();
 	}
 	public void submit() throws IOException,Exception{
 		if(askFoodMap.size() > 0) {
 			writer.println(Message.SUBMIT);
 			writer.flush();
 			Thread.currentThread().sleep(40);
-			System.out.println(askFoodMap);
 			oos.reset();
 			oos.writeObject(askFoodMap);
 			oos.flush();
 			System.out.println("submit has sent");
-//			askFoodMap.clear();
-//			listener.action();
 			recevieSubmint();
 		}
 	}
@@ -80,12 +85,12 @@ public class Client implements Runnable{
 					}
 					switch(message) {
 						case Message.INIT:
-							Thread.currentThread().sleep(1000);
-							System.out.println(System.currentTimeMillis());
-							foodList = (ArrayList<Food>)ois.readObject();
-							System.out.println("get food done");
-							initFoodMap();
-							System.out.println("Client get" + foodList);
+//							Thread.currentThread().sleep(4000);
+//							System.out.println(System.currentTimeMillis());
+//							foodList = (ArrayList<Food>)ois.readObject();
+//							System.out.println("get food done");
+//							initFoodMap();
+//							System.out.println("Client get" + foodList);
 							break;
 						case Message.GET_SUBMIT:
 						//	recevieSubmint();

@@ -11,12 +11,12 @@ public class Food implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String name;
-	private double price;
+	private Double price;
 	private ImageIcon imageIcon;
 	
 	public Food() {	
 	}
-	public Food(String name, ImageIcon image, double price) {
+	public Food(String name, ImageIcon image, Double price) {
 		this.name = name;
 		this.imageIcon = image;
 		this.price = price;

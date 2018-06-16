@@ -34,7 +34,7 @@ class MockServerTest {
 	void build() throws Exception {
 		foodList = new ArrayList<Food>();
 		for(int i=0; i < 5; i++) {
-			Food food = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),i);
+			Food food = new Food("food"+i, new ImageIcon("images/"+i+".jpg"),new Double(i));
 			foodList.add(food);
 		}
 		create();
