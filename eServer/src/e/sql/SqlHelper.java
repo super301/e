@@ -9,8 +9,8 @@ public class SqlHelper {
 	private int sum;
 	private String driver = "com.mysql.cj.jdbc.Driver";
 	private String url="jdbc:mysql://127.0.0.1/test?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Hongkong";
-	private String username = "3011";
-	private String password = "3011";
+	private String username = "****";
+	private String password = "****";
 	
 	public SqlHelper() {
 		try {
@@ -80,7 +80,7 @@ public class SqlHelper {
 		SqlTest sql;
 //		SqlHelper sql = new SqlHelper();
 //		String insert = "insert into foods(name, price, uri) values(?, ?, ?)";
-//		String []params = {"��֭���跹", "10.0", "E:/java-eclipse/se/eServer/images/4.jpg"};
+//		String []params = {"ÇÑÖ­ÈâÍè·¹", "10.0", "E:/java-eclipse/se/eServer/images/4.jpg"};
 //		sql.updateExecute(insert, params);
 		sql = new SqlTest();
 		int i = sql.queryExecute("select count(*) from foods");
